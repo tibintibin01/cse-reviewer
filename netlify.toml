@@ -1,0 +1,10 @@
+# Netlify build configuration for continuous deployment.
+# When the GitHub repo is linked to Netlify, every push builds and publishes
+# using these settings.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
