@@ -20,6 +20,11 @@ const HARD = new Set<string>([
   'ana-49', 'ana-50', 'ana-51', 'ana-52', 'ana-53', 'ana-54', 'ana-55', 'ana-56',
   'ana-57', 'ana-58', 'ana-59', 'ana-60', 'ana-61', 'ana-62', 'ana-63', 'ana-64',
   'ana-65',
+  // Treasury (BCLTE-level)
+  'tlg-13', 'tlg-14', 'tlg-15',
+  'trp-13', 'trp-14', 'trp-15', 'trp-16', 'trp-17',
+  'trv-12', 'trv-13', 'trv-14', 'trv-15', 'trv-16',
+  'tca-17', 'tca-18', 'tca-19', 'tca-20', 'tca-21',
 ]);
 
 const EASY = new Set<string>([

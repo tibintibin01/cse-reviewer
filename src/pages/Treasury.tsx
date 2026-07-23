@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { QuizConfig, TopicId } from '../types';
+import type { Difficulty, QuizConfig, TopicId } from '../types';
 import { getTopic, topicsForLevel } from '../data/topics';
 import { countAvailable } from '../lib/quiz';
 import { colorStyle } from '../lib/ui';
@@ -12,10 +12,12 @@ export default function Treasury() {
   const [selected, setSelected] = useState<TopicId[]>([]);
   const [count, setCount] = useState(10);
   const [timed, setTimed] = useState(false);
+  const [difficulty, setDifficulty] = useState<'any' | Difficulty>('any');
 
   const topics = topicsForLevel('treasury');
-  const available = countAvailable('treasury', selected);
-  const effectiveCount = Math.min(count, Math.max(1, available));
+  const difficulties = difficulty === 'any' ? undefined : [difficulty];
+  const available = countAvailable('treasury', selected, difficulties);
+  const effectiveCount = Math.min(count, available);
 
   function toggleTopic(id: TopicId) {
     setSelected((prev) =>
@@ -24,17 +26,19 @@ export default function Treasury() {
   }
 
   function start() {
-    const label = timed
+    const base = timed
       ? 'Treasury Exam'
       : selected.length === 1
       ? `Treasury: ${getTopic(selected[0])?.shortName}`
       : 'Treasury Practice';
+    const label = difficulty === 'any' ? base : `${base} (${difficulty})`;
 
     const cfg: QuizConfig = {
       mode: timed ? 'mock' : 'practice',
       level: 'treasury',
       topicIds: selected,
       count: effectiveCount,
+      difficulties,
       timeLimitSec: timed ? effectiveCount * 60 : undefined,
       immediateFeedback: !timed,
       label,
@@ -54,6 +58,32 @@ export default function Treasury() {
           Government Code and treasury operations. This is separate from the Civil
           Service Exam.
         </p>
+      </div>
+
+      {/* Difficulty */}
+      <div className="mt-6">
+        <p className="mb-2 text-sm font-semibold text-slate-900">Difficulty</p>
+        <div className="inline-flex flex-wrap gap-1 rounded-lg border border-slate-300 bg-white p-1">
+          {(['any', 'easy', 'medium', 'hard'] as const).map((d) => (
+            <button
+              key={d}
+              type="button"
+              onClick={() => setDifficulty(d)}
+              className={`rounded-md px-3 py-1.5 text-sm font-semibold capitalize transition ${
+                difficulty === d
+                  ? 'bg-indigo-600 text-white'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              {d === 'any' ? 'Any' : d}
+            </button>
+          ))}
+        </div>
+        {difficulty === 'hard' && (
+          <p className="mt-2 text-xs font-medium text-rose-600">
+            BCLTE-level: computations, thresholds, and procedures. Expect to sweat.
+          </p>
+        )}
       </div>
 
       {/* Topics */}
@@ -158,10 +188,14 @@ export default function Treasury() {
       <button
         type="button"
         onClick={start}
-        className="mt-6 w-full rounded-lg bg-indigo-600 px-5 py-3 text-sm font-bold text-white hover:bg-indigo-700"
+        disabled={effectiveCount === 0}
+        className="mt-6 w-full rounded-lg bg-indigo-600 px-5 py-3 text-sm font-bold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40"
       >
-        {timed ? 'Start timed exam' : 'Start practice'} ({effectiveCount} question
-        {effectiveCount > 1 ? 's' : ''})
+        {effectiveCount === 0
+          ? 'No questions match this selection'
+          : `${timed ? 'Start timed exam' : 'Start practice'} (${effectiveCount} question${
+              effectiveCount > 1 ? 's' : ''
+            })`}
       </button>
     </div>
   );
