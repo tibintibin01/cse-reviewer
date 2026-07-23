@@ -3,6 +3,7 @@
 import type {
   Level,
   TopicId,
+  Difficulty,
   Question,
   QuestionView,
   QuizConfig,
@@ -11,6 +12,7 @@ import type {
 } from '../types';
 import { PASSING_PCT } from '../types';
 import { QUESTIONS } from '../data/questions';
+import { difficultyOf } from '../data/difficulty';
 import { getProfileName, getSeenIds, setSeenIds } from './storage';
 
 export function shuffle<T>(arr: T[]): T[] {
@@ -26,16 +28,27 @@ export function getQuestionById(id: string): Question | undefined {
   return QUESTIONS.find((q) => q.id === id);
 }
 
-export function poolFor(level: Level, topicIds: TopicId[]): Question[] {
+export function poolFor(
+  level: Level,
+  topicIds: TopicId[],
+  difficulties?: Difficulty[],
+): Question[] {
   let pool = QUESTIONS.filter((q) => q.levels.includes(level));
   if (topicIds.length > 0) {
     pool = pool.filter((q) => topicIds.includes(q.topic));
   }
+  if (difficulties && difficulties.length > 0) {
+    pool = pool.filter((q) => difficulties.includes(difficultyOf(q.id)));
+  }
   return pool;
 }
 
-export function countAvailable(level: Level, topicIds: TopicId[]): number {
-  return poolFor(level, topicIds).length;
+export function countAvailable(
+  level: Level,
+  topicIds: TopicId[],
+  difficulties?: Difficulty[],
+): number {
+  return poolFor(level, topicIds, difficulties).length;
 }
 
 /**
@@ -70,7 +83,7 @@ export function selectQuestions(config: QuizConfig): Question[] {
     return shuffled.slice(0, Math.min(config.count, shuffled.length));
   }
   // Practice / mock: rotate through unseen questions first.
-  const pool = poolFor(config.level, config.topicIds);
+  const pool = poolFor(config.level, config.topicIds, config.difficulties);
   return pickFresh(pool, config.count);
 }
 
@@ -81,7 +94,9 @@ export function selectQuestions(config: QuizConfig): Question[] {
  */
 export function commitSeen(config: QuizConfig, shownIds: string[]): void {
   if (config.questionIds && config.questionIds.length > 0) return;
-  const poolIds = poolFor(config.level, config.topicIds).map((q) => q.id);
+  const poolIds = poolFor(config.level, config.topicIds, config.difficulties).map(
+    (q) => q.id,
+  );
   const seen = new Set(getSeenIds());
   for (const id of shownIds) seen.add(id);
   if (poolIds.length > 0 && poolIds.every((id) => seen.has(id))) {

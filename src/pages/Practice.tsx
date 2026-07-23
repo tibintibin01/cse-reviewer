@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Level, QuizConfig, TopicId } from '../types';
+import type { Difficulty, Level, QuizConfig, TopicId } from '../types';
 import { getTopic, topicsForLevel } from '../data/topics';
 import { countAvailable } from '../lib/quiz';
 import { colorStyle } from '../lib/ui';
@@ -13,10 +13,12 @@ export default function Practice() {
   const [selected, setSelected] = useState<TopicId[]>([]);
   const [count, setCount] = useState(10);
   const [immediate, setImmediate] = useState(true);
+  const [difficulty, setDifficulty] = useState<'any' | Difficulty>('any');
 
   const topics = topicsForLevel(level);
-  const available = countAvailable(level, selected);
-  const effectiveCount = Math.min(count, Math.max(1, available));
+  const difficulties = difficulty === 'any' ? undefined : [difficulty];
+  const available = countAvailable(level, selected, difficulties);
+  const effectiveCount = Math.min(count, available);
 
   function changeLevel(next: Level) {
     setLevel(next);
@@ -32,18 +34,20 @@ export default function Practice() {
   }
 
   function start() {
-    const label =
+    const base =
       selected.length === 1
         ? `Practice: ${getTopic(selected[0])?.name}`
         : selected.length === 0
         ? 'Practice: All topics'
         : `Practice: ${selected.length} topics`;
+    const label = difficulty === 'any' ? base : `${base} (${difficulty})`;
 
     const cfg: QuizConfig = {
       mode: 'practice',
       level,
       topicIds: selected,
       count: effectiveCount,
+      difficulties,
       immediateFeedback: immediate,
       label,
     };
@@ -74,6 +78,32 @@ export default function Practice() {
             Sub-Professional
           </LevelButton>
         </div>
+      </div>
+
+      {/* Difficulty */}
+      <div className="mt-6">
+        <p className="mb-2 text-sm font-semibold text-slate-900">Difficulty</p>
+        <div className="inline-flex flex-wrap gap-1 rounded-lg border border-slate-300 bg-white p-1">
+          {(['any', 'easy', 'medium', 'hard'] as const).map((d) => (
+            <button
+              key={d}
+              type="button"
+              onClick={() => setDifficulty(d)}
+              className={`rounded-md px-3 py-1.5 text-sm font-semibold capitalize transition ${
+                difficulty === d
+                  ? 'bg-blue-600 text-white'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              {d === 'any' ? 'Any' : d}
+            </button>
+          ))}
+        </div>
+        {difficulty === 'hard' && (
+          <p className="mt-2 text-xs font-medium text-rose-600">
+            Challenge: hardest questions only. Good luck.
+          </p>
+        )}
       </div>
 
       {/* Topics */}
@@ -172,9 +202,12 @@ export default function Practice() {
       <button
         type="button"
         onClick={start}
-        className="mt-6 w-full rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700"
+        disabled={effectiveCount === 0}
+        className="mt-6 w-full rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
       >
-        Start practice ({effectiveCount} question{effectiveCount > 1 ? 's' : ''})
+        {effectiveCount === 0
+          ? 'No questions match this selection'
+          : `Start practice (${effectiveCount} question${effectiveCount > 1 ? 's' : ''})`}
       </button>
     </div>
   );

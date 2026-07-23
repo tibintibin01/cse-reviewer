@@ -2,6 +2,8 @@
 
 export type Level = 'professional' | 'subprofessional' | 'treasury';
 
+export type Difficulty = 'easy' | 'medium' | 'hard';
+
 export type TopicId =
   | 'numerical'
   | 'analytical'
@@ -61,6 +63,8 @@ export interface QuizConfig {
   questionIds?: string[];
   /** Number of questions to include. */
   count: number;
+  /** Restrict to these difficulty levels. Empty/undefined means all. */
+  difficulties?: Difficulty[];
   /** Time limit in seconds (mock exams). Undefined means untimed. */
   timeLimitSec?: number;
   /** Show correct/incorrect immediately after each answer (practice). */

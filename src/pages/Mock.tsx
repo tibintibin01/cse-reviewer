@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Level, QuizConfig } from '../types';
+import type { Difficulty, Level, QuizConfig } from '../types';
 import { countAvailable } from '../lib/quiz';
 import { formatDuration } from '../lib/format';
 
@@ -28,9 +28,11 @@ export default function Mock() {
   const navigate = useNavigate();
   const [level, setLevel] = useState<Level>('professional');
   const [length, setLength] = useState<number>(40);
+  const [challenge, setChallenge] = useState(false);
 
   const info = OFFICIAL[level];
-  const available = countAvailable(level, []);
+  const difficulties: Difficulty[] | undefined = challenge ? ['hard'] : undefined;
+  const available = countAvailable(level, [], difficulties);
   const effectiveCount = Math.min(length, available);
   const isFull = length >= available;
   const timeLimitSec = effectiveCount * info.perItem;
@@ -41,9 +43,10 @@ export default function Mock() {
       level,
       topicIds: [],
       count: effectiveCount,
+      difficulties,
       timeLimitSec,
       immediateFeedback: false,
-      label: `Mock Exam (${info.label})`,
+      label: `${challenge ? 'Challenge Mock' : 'Mock Exam'} (${info.label})`,
     };
     navigate('/quiz', { state: { config: cfg } });
   }
@@ -83,6 +86,31 @@ export default function Mock() {
             Sub-Professional
           </button>
         </div>
+      </div>
+
+      {/* Challenge mode */}
+      <div className="mt-6 flex items-center justify-between rounded-lg border border-rose-200 bg-rose-50 p-4">
+        <div>
+          <p className="text-sm font-semibold text-slate-900">Challenge mode</p>
+          <p className="text-xs text-slate-500">
+            Hard questions only, a real sweat. Off = the normal mixed exam.
+          </p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={challenge}
+          onClick={() => setChallenge((v) => !v)}
+          className={`relative h-6 w-11 rounded-full transition ${
+            challenge ? 'bg-rose-600' : 'bg-slate-300'
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${
+              challenge ? 'left-[22px]' : 'left-0.5'
+            }`}
+          />
+        </button>
       </div>
 
       {/* Length */}
@@ -161,9 +189,16 @@ export default function Mock() {
       <button
         type="button"
         onClick={start}
-        className="mt-6 w-full rounded-lg bg-violet-600 px-5 py-3 text-sm font-bold text-white hover:bg-violet-700"
+        disabled={effectiveCount === 0}
+        className={`mt-6 w-full rounded-lg px-5 py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-40 ${
+          challenge
+            ? 'bg-rose-600 hover:bg-rose-700'
+            : 'bg-violet-600 hover:bg-violet-700'
+        }`}
       >
-        Start mock exam ({effectiveCount} items)
+        {effectiveCount === 0
+          ? 'No questions available'
+          : `Start ${challenge ? 'challenge' : 'mock'} exam (${effectiveCount} items)`}
       </button>
     </div>
   );

@@ -1,4 +1,5 @@
-import type { QuestionView } from '../types';
+import type { Difficulty, QuestionView } from '../types';
+import { difficultyOf } from '../data/difficulty';
 
 interface Props {
   question: QuestionView;
@@ -24,8 +25,11 @@ export default function QuestionCard({
 }: Props) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-        Question {index + 1} of {total}
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Question {index + 1} of {total}
+        </span>
+        <DifficultyBadge id={question.id} />
       </div>
 
       {question.passage && (
@@ -81,5 +85,22 @@ export default function QuestionCard({
         </div>
       )}
     </div>
+  );
+}
+
+const DIFFICULTY_STYLE: Record<Difficulty, string> = {
+  easy: 'bg-emerald-100 text-emerald-700',
+  medium: 'bg-amber-100 text-amber-700',
+  hard: 'bg-rose-100 text-rose-700',
+};
+
+function DifficultyBadge({ id }: { id: string }) {
+  const d = difficultyOf(id);
+  return (
+    <span
+      className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${DIFFICULTY_STYLE[d]}`}
+    >
+      {d}
+    </span>
   );
 }

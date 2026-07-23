@@ -2996,6 +2996,154 @@ export const QUESTIONS: Question[] = [
     explanation: 'The differences increase by 5 each time (5, 10, 15, 20, then 25): 56 + 25 = 81.',
   },
 
+  // ---- Numerical (brutal) ----
+  {
+    id: 'num-65',
+    topic: 'numerical',
+    levels: BOTH,
+    question: 'At simple interest, a sum doubles in 5 years. In how many years will it triple?',
+    choices: ['8', '10', '12', '15'],
+    answerIndex: 1,
+    explanation:
+      'Doubling in 5 years means the yearly interest is 20% of the principal. Tripling needs interest equal to twice the principal, which takes 10 years.',
+  },
+  {
+    id: 'num-66',
+    topic: 'numerical',
+    levels: BOTH,
+    question:
+      'A can finish a job in 10 days, B in 15 days. They work together for 4 days, then A leaves. How many more days will B need to finish?',
+    choices: ['4', '5', '6', '7'],
+    answerIndex: 1,
+    explanation:
+      'Together they do 1/10 + 1/15 = 1/6 per day; in 4 days that is 2/3. The remaining 1/3 at B\u2019s rate of 1/15 per day takes 5 days.',
+  },
+  {
+    id: 'num-67',
+    topic: 'numerical',
+    levels: BOTH,
+    question:
+      'How many liters of pure water must be added to 20 liters of a 40% acid solution to make it 25% acid?',
+    choices: ['8', '12', '15', '10'],
+    answerIndex: 1,
+    explanation:
+      'The acid stays at 8 liters. For 8 liters to be 25%, the total must be 32 liters, so add 12 liters of water.',
+  },
+  {
+    id: 'num-68',
+    topic: 'numerical',
+    levels: BOTH,
+    question: 'Find the next number: 1, 2, 6, 24, 120, ?',
+    choices: ['240', '600', '720', '840'],
+    answerIndex: 2,
+    explanation: 'Each term is multiplied by the next counting number (x2, x3, x4, x5, x6): 120 x 6 = 720.',
+  },
+  {
+    id: 'num-69',
+    topic: 'numerical',
+    levels: BOTH,
+    question:
+      'The average of 5 numbers is 20. When one number is removed, the average of the rest becomes 18. What number was removed?',
+    choices: ['24', '26', '28', '30'],
+    answerIndex: 2,
+    explanation: 'Total = 100. The remaining four sum to 72. The removed number is 100 - 72 = 28.',
+  },
+
+  // ---- English (brutal) ----
+  {
+    id: 'eng-19',
+    topic: 'english',
+    levels: BOTH,
+    question: 'PERFUNCTORY most nearly means:',
+    choices: ['thorough', 'done routinely with little care', 'enthusiastic', 'highly detailed'],
+    answerIndex: 1,
+    explanation: 'Perfunctory means carried out with minimal effort or interest.',
+  },
+  {
+    id: 'eng-20',
+    topic: 'english',
+    levels: BOTH,
+    question: 'Choose the word closest in meaning to PRAGMATIC.',
+    choices: ['idealistic', 'practical', 'emotional', 'careless'],
+    answerIndex: 1,
+    explanation: 'Pragmatic means dealing with things practically rather than idealistically.',
+  },
+  {
+    id: 'eng-21',
+    topic: 'english',
+    levels: BOTH,
+    question: 'Choose the correct verb: "Neither of the proposals ____ acceptable."',
+    choices: ['are', 'is', 'were', 'have'],
+    answerIndex: 1,
+    explanation: '"Neither" is singular, so it takes the singular verb "is".',
+  },
+  {
+    id: 'eng-22',
+    topic: 'english',
+    levels: BOTH,
+    question: 'OBSOLETE is to OUTDATED as PRUDENT is to ____.',
+    choices: ['reckless', 'cautious', 'wealthy', 'rapid'],
+    answerIndex: 1,
+    explanation: 'The pairs are synonyms: obsolete means outdated; prudent means cautious.',
+  },
+  {
+    id: 'eng-23',
+    topic: 'english',
+    levels: BOTH,
+    question: 'Choose the correct word: "____ did you give the report to?"',
+    choices: ['Who', 'Whom', 'Whose', 'Which'],
+    answerIndex: 1,
+    explanation: '"Whom" is the object of the preposition "to", so it is correct here.',
+  },
+
+  // ---- Analytical / Logic (brutal) ----
+  {
+    id: 'ana-61',
+    topic: 'analytical',
+    levels: PRO,
+    question: 'Some A are B. All B are C. Which conclusion necessarily follows?',
+    choices: ['All A are C', 'Some A are C', 'No A are C', 'No valid conclusion follows'],
+    answerIndex: 1,
+    explanation: 'The A that are B must also be C (since all B are C), so some A are C.',
+  },
+  {
+    id: 'ana-62',
+    topic: 'analytical',
+    levels: PRO,
+    question: 'Find the next number: 2, 12, 36, 80, ?',
+    choices: ['150', '120', '130', '160'],
+    answerIndex: 0,
+    explanation: 'Each term is n-cubed plus n-squared (1+1, 8+4, 27+9, 64+16); for n=5, 125 + 25 = 150.',
+  },
+  {
+    id: 'ana-63',
+    topic: 'analytical',
+    levels: PRO,
+    question:
+      'A is taller than B. C is shorter than B but taller than D. Who is the shortest?',
+    choices: ['A', 'B', 'C', 'D'],
+    answerIndex: 3,
+    explanation: 'The order is A > B > C > D, so D is the shortest.',
+  },
+  {
+    id: 'ana-64',
+    topic: 'analytical',
+    levels: PRO,
+    question: 'If 5 = 30, 6 = 42, and 7 = 56, then 8 = ?',
+    choices: ['64', '72', '80', '90'],
+    answerIndex: 1,
+    explanation: 'The pattern is n x (n + 1): 8 x 9 = 72.',
+  },
+  {
+    id: 'ana-65',
+    topic: 'analytical',
+    levels: PRO,
+    question: 'How many times in a full 24-hour day do the hands of a clock overlap?',
+    choices: ['24', '22', '12', '48'],
+    answerIndex: 1,
+    explanation: 'The hands overlap 11 times about every 12 hours, so 22 times in 24 hours.',
+  },
+
   // ============================ TREASURY TRACK (LGU municipal treasury) =======
   // Separate from the CSE. Office/job-knowledge review for treasury staff.
 
