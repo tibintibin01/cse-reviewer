@@ -2,7 +2,7 @@
 
 export type Level = 'professional' | 'subprofessional' | 'treasury';
 
-export type Difficulty = 'easy' | 'medium' | 'hard';
+export type Difficulty = 'easy' | 'medium' | 'hard' | 'brutal';
 
 export type TopicId =
   | 'numerical'
@@ -11,6 +11,7 @@ export type TopicId =
   | 'filipino'
   | 'clerical'
   | 'general'
+  | 'find-error'
   | 'tr-lgc'
   | 'tr-rpt'
   | 'tr-rev'

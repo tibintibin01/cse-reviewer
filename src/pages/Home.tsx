@@ -1,6 +1,11 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { getMistakeIds, getProfileName, getResults } from '../lib/storage';
+import {
+  getMistakeIds,
+  getProfileName,
+  getResults,
+  getTreasuryPassed,
+} from '../lib/storage';
 import { formatPct } from '../lib/format';
 
 interface FeatureCard {
@@ -74,6 +79,7 @@ export default function Home() {
   const trBest = trAttempts
     ? Math.max(...treasuryResults.map((r) => r.scorePct))
     : 0;
+  const brutalCleared = getTreasuryPassed().includes('brutal');
 
   return (
     <div>
@@ -108,6 +114,41 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Brutal cleared trophy */}
+      {brutalCleared && (
+        <section className="mt-5 flex items-center gap-3 rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-100 to-yellow-50 p-4 shadow-sm">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-500 text-white shadow">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="h-6 w-6"
+            >
+              <path d="M8 21h8M12 17v4" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M7 4h10v4a5 5 0 0 1-10 0V4Z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-extrabold text-amber-800">
+              Brutal Treasury Cleared
+            </p>
+            <p className="text-xs text-amber-700">
+              You survived the boss level. Respect.
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* Quick stats */}
       <section className="mt-5 grid grid-cols-3 gap-3">

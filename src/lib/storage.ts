@@ -122,11 +122,13 @@ export function isTreasuryTierUnlocked(d: Difficulty): boolean {
   if (d === 'easy') return true;
   const passed = getTreasuryPassed();
   if (d === 'medium') return passed.includes('easy');
-  return passed.includes('medium');
+  if (d === 'hard') return passed.includes('medium');
+  return passed.includes('hard'); // brutal
 }
 
 export function highestUnlockedTreasuryTier(): Difficulty {
   const passed = getTreasuryPassed();
+  if (passed.includes('hard')) return 'brutal';
   if (passed.includes('medium')) return 'hard';
   if (passed.includes('easy')) return 'medium';
   return 'easy';
@@ -135,5 +137,6 @@ export function highestUnlockedTreasuryTier(): Difficulty {
 export function nextTreasuryTier(d: Difficulty): Difficulty | null {
   if (d === 'easy') return 'medium';
   if (d === 'medium') return 'hard';
+  if (d === 'hard') return 'brutal';
   return null;
 }

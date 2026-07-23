@@ -97,8 +97,8 @@ export default function Treasury() {
         <p className="mb-2 text-xs text-slate-500">
           Pass a level (at least 80% on 5 or more questions) to unlock the next one.
         </p>
-        <div className="grid grid-cols-3 gap-2">
-          {(['easy', 'medium', 'hard'] as const).map((tier) => {
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {(['easy', 'medium', 'hard', 'brutal'] as const).map((tier) => {
             const unlocked = isTreasuryTierUnlocked(tier);
             const isPassed = passed.includes(tier);
             const isSelected = difficulty === tier;
@@ -133,6 +133,11 @@ export default function Treasury() {
         {difficulty === 'hard' && (
           <p className="mt-2 text-xs font-medium text-rose-600">
             BCLTE-level: computations, thresholds, and procedures. Expect to sweat.
+          </p>
+        )}
+        {difficulty === 'brutal' && (
+          <p className="mt-2 text-xs font-bold text-slate-900">
+            BRUTAL: multi-step computations and obscure rules. No mercy.
           </p>
         )}
       </div>

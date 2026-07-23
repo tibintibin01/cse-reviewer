@@ -92,6 +92,7 @@ const DIFFICULTY_STYLE: Record<Difficulty, string> = {
   easy: 'bg-emerald-100 text-emerald-700',
   medium: 'bg-amber-100 text-amber-700',
   hard: 'bg-rose-100 text-rose-700',
+  brutal: 'bg-slate-900 text-white',
 };
 
 function DifficultyBadge({ id }: { id: string }) {

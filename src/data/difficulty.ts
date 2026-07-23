@@ -16,6 +16,8 @@ const HARD = new Set<string>([
   'eng-7', 'eng-8', 'eng-9', 'eng-10', 'eng-11', 'eng-12', 'eng-13', 'eng-14',
   'eng-15', 'eng-16', 'eng-17', 'eng-18', 'eng-19', 'eng-20', 'eng-21', 'eng-22',
   'eng-23',
+  // Find-the-error (Sub-Professional): hard
+  'fe-21', 'fe-22', 'fe-23', 'fe-24', 'fe-25', 'fe-26', 'fe-27', 'fe-28', 'fe-29', 'fe-30',
   // Analytical / logic (syllogism validity, ordering, coding, tough series)
   'ana-49', 'ana-50', 'ana-51', 'ana-52', 'ana-53', 'ana-54', 'ana-55', 'ana-56',
   'ana-57', 'ana-58', 'ana-59', 'ana-60', 'ana-61', 'ana-62', 'ana-63', 'ana-64',
@@ -35,6 +37,8 @@ const EASY = new Set<string>([
   // English: basic synonym/antonym/spelling/preposition
   'ver-1', 'ver-2', 'ver-4', 'ver-7', 'ver-23', 'ver-24', 'ver-25', 'ver-33',
   'eng-1', 'eng-2', 'eng-3', 'eng-6',
+  // Find-the-error (Sub-Professional): easy
+  'fe-1', 'fe-2', 'fe-3', 'fe-4', 'fe-5', 'fe-6', 'fe-7', 'fe-8', 'fe-9', 'fe-10',
   // Filipino: basic vocabulary/spelling
   'fil-1', 'fil-2', 'fil-5', 'fil-9', 'fil-11', 'fil-13', 'ver-9', 'ver-19', 'ver-35',
   // Clerical: basic spelling / simple comparison
@@ -50,7 +54,20 @@ const EASY = new Set<string>([
   'tca-1', 'tca-2', 'tca-5', 'tca-6', 'tca-8', 'tca-12', 'tca-13', 'tca-15', 'tca-16',
 ]);
 
+// The boss level: reserved for multi-step computations and precise, obscure rules.
+const BRUTAL = new Set<string>([
+  // Treasury (BCLTE-level)
+  'tlg-16', 'tlg-17', 'tlg-18',
+  'trp-18', 'trp-19', 'trp-20', 'trp-21',
+  'trv-17', 'trv-18', 'trv-19', 'trv-20', 'trv-21',
+  'tca-22', 'tca-23', 'tca-24',
+  // Brutal set 2: LTOM procedures, fidelity bond math, accounting entries
+  'tlg-19', 'tlg-20', 'trp-22', 'trv-22',
+  'tca-25', 'tca-26', 'tca-27', 'tca-28', 'tca-29', 'tca-30', 'tca-31', 'tca-32',
+]);
+
 export function difficultyOf(id: string): Difficulty {
+  if (BRUTAL.has(id)) return 'brutal';
   if (HARD.has(id)) return 'hard';
   if (EASY.has(id)) return 'easy';
   return 'medium';

@@ -55,6 +55,15 @@ export const TOPICS: Topic[] = [
     levels: ['professional', 'subprofessional'],
     color: 'rose',
   },
+  {
+    id: 'find-error',
+    name: 'Find the Error',
+    shortName: 'Find the Error',
+    description:
+      'Spot the grammatical error in a sentence, or decide there is none. English sentence-correction drills.',
+    levels: ['professional', 'subprofessional'],
+    color: 'orange',
+  },
 
   // Treasury track (LGU municipal treasury) - a separate section, not part of the CSE.
   {
