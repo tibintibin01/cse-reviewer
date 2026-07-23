@@ -43,8 +43,11 @@ const EASY = new Set<string>([
   'gen-1', 'gen-6', 'gen-7', 'gen-12', 'gen-36', 'gen-37', 'gen-40',
   // Analytical: basic analogies / odd-one-out
   'ana-1', 'ana-4', 'ana-8', 'ana-12',
-  // Treasury: direct recall
-  'tlg-1', 'trv-2',
+  // Treasury: basic direct-recall items (so the Easy tier is playable)
+  'tlg-1', 'tlg-2', 'tlg-4', 'tlg-5', 'tlg-7', 'tlg-8', 'tlg-9', 'tlg-11', 'tlg-12',
+  'trp-1', 'trp-2', 'trp-3', 'trp-4', 'trp-9', 'trp-11',
+  'trv-1', 'trv-2', 'trv-3', 'trv-5', 'trv-6', 'trv-7', 'trv-10',
+  'tca-1', 'tca-2', 'tca-5', 'tca-6', 'tca-8', 'tca-12', 'tca-13', 'tca-15', 'tca-16',
 ]);
 
 export function difficultyOf(id: string): Difficulty {

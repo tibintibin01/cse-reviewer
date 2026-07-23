@@ -4,6 +4,12 @@ import type { Difficulty, QuizConfig, TopicId } from '../types';
 import { getTopic, topicsForLevel } from '../data/topics';
 import { countAvailable } from '../lib/quiz';
 import { colorStyle } from '../lib/ui';
+import {
+  clearTreasuryProgress,
+  getTreasuryPassed,
+  highestUnlockedTreasuryTier,
+  isTreasuryTierUnlocked,
+} from '../lib/storage';
 
 const COUNT_OPTIONS = [5, 10, 15, 20];
 
@@ -12,10 +18,13 @@ export default function Treasury() {
   const [selected, setSelected] = useState<TopicId[]>([]);
   const [count, setCount] = useState(10);
   const [timed, setTimed] = useState(false);
-  const [difficulty, setDifficulty] = useState<'any' | Difficulty>('any');
+  const [difficulty, setDifficulty] = useState<Difficulty>(() =>
+    highestUnlockedTreasuryTier(),
+  );
 
+  const passed = getTreasuryPassed();
   const topics = topicsForLevel('treasury');
-  const difficulties = difficulty === 'any' ? undefined : [difficulty];
+  const difficulties = [difficulty];
   const available = countAvailable('treasury', selected, difficulties);
   const effectiveCount = Math.min(count, available);
 
@@ -31,7 +40,7 @@ export default function Treasury() {
       : selected.length === 1
       ? `Treasury: ${getTopic(selected[0])?.shortName}`
       : 'Treasury Practice';
-    const label = difficulty === 'any' ? base : `${base} (${difficulty})`;
+    const label = `${base} (${difficulty})`;
 
     const cfg: QuizConfig = {
       mode: timed ? 'mock' : 'practice',
@@ -44,6 +53,17 @@ export default function Treasury() {
       label,
     };
     navigate('/quiz', { state: { config: cfg } });
+  }
+
+  function resetProgress() {
+    if (
+      window.confirm(
+        'Reset your Treasury progression? You will need to unlock Medium and Hard again.',
+      )
+    ) {
+      clearTreasuryProgress();
+      setDifficulty('easy');
+    }
   }
 
   return (
@@ -60,24 +80,55 @@ export default function Treasury() {
         </p>
       </div>
 
-      {/* Difficulty */}
+      {/* Progression ladder */}
       <div className="mt-6">
-        <p className="mb-2 text-sm font-semibold text-slate-900">Difficulty</p>
-        <div className="inline-flex flex-wrap gap-1 rounded-lg border border-slate-300 bg-white p-1">
-          {(['any', 'easy', 'medium', 'hard'] as const).map((d) => (
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-semibold text-slate-900">Progression</p>
+          {passed.length > 0 && (
             <button
-              key={d}
               type="button"
-              onClick={() => setDifficulty(d)}
-              className={`rounded-md px-3 py-1.5 text-sm font-semibold capitalize transition ${
-                difficulty === d
-                  ? 'bg-indigo-600 text-white'
-                  : 'text-slate-600 hover:bg-slate-100'
-              }`}
+              onClick={resetProgress}
+              className="text-xs font-medium text-slate-400 hover:text-slate-600"
             >
-              {d === 'any' ? 'Any' : d}
+              Reset
             </button>
-          ))}
+          )}
+        </div>
+        <p className="mb-2 text-xs text-slate-500">
+          Pass a level (at least 80% on 5 or more questions) to unlock the next one.
+        </p>
+        <div className="grid grid-cols-3 gap-2">
+          {(['easy', 'medium', 'hard'] as const).map((tier) => {
+            const unlocked = isTreasuryTierUnlocked(tier);
+            const isPassed = passed.includes(tier);
+            const isSelected = difficulty === tier;
+            return (
+              <button
+                key={tier}
+                type="button"
+                disabled={!unlocked}
+                onClick={() => setDifficulty(tier)}
+                className={`rounded-xl border p-3 text-center transition disabled:cursor-not-allowed ${
+                  isSelected
+                    ? 'border-indigo-600 bg-indigo-50 ring-1 ring-indigo-500'
+                    : unlocked
+                    ? 'border-slate-300 bg-white hover:bg-slate-50'
+                    : 'border-slate-200 bg-slate-50 opacity-70'
+                }`}
+              >
+                <div className="text-sm font-bold capitalize text-slate-900">{tier}</div>
+                <div className="mt-1 text-[11px] font-semibold">
+                  {isPassed ? (
+                    <span className="text-emerald-600">Passed</span>
+                  ) : unlocked ? (
+                    <span className="text-indigo-600">Ready</span>
+                  ) : (
+                    <span className="text-slate-400">Locked</span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
         </div>
         {difficulty === 'hard' && (
           <p className="mt-2 text-xs font-medium text-rose-600">

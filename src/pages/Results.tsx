@@ -1,5 +1,11 @@
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import type { AttemptResult, QuestionView, QuizConfig, TopicId } from '../types';
+import type {
+  AttemptResult,
+  Difficulty,
+  QuestionView,
+  QuizConfig,
+  TopicId,
+} from '../types';
 import { PASSING_PCT } from '../types';
 import { getQuestionById } from '../lib/quiz';
 import { getTopic } from '../data/topics';
@@ -8,12 +14,14 @@ import QuestionCard from '../components/QuestionCard';
 
 interface LocationState {
   result?: AttemptResult;
+  unlockedTier?: Difficulty;
 }
 
 export default function Results() {
   const location = useLocation();
   const navigate = useNavigate();
   const result = (location.state as LocationState | null)?.result;
+  const unlockedTier = (location.state as LocationState | null)?.unlockedTier;
 
   if (!result) {
     return <Navigate to="/" replace />;
@@ -87,6 +95,18 @@ export default function Results() {
           </span>
         </div>
       </div>
+
+      {/* Progression unlock */}
+      {unlockedTier && (
+        <div className="mt-4 rounded-2xl border border-indigo-300 bg-indigo-50 p-4 text-center">
+          <p className="text-sm font-extrabold text-indigo-700">New level unlocked!</p>
+          <p className="mt-0.5 text-xs text-slate-600">
+            You cleared this tier and unlocked the{' '}
+            <span className="font-semibold capitalize">{unlockedTier}</span> Treasury
+            level. Open Treasury to take it on.
+          </p>
+        </div>
+      )}
 
       {/* Per-topic breakdown */}
       {byTopic.size > 0 && (

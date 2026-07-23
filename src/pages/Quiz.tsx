@@ -1,8 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import type { QuizConfig } from '../types';
+import type { Difficulty, QuizConfig } from '../types';
 import { buildResult, commitSeen, prepareQuestions, selectQuestions } from '../lib/quiz';
-import { saveResult, updateMistakes } from '../lib/storage';
+import {
+  getTreasuryPassed,
+  nextTreasuryTier,
+  recordTreasuryPass,
+  saveResult,
+  updateMistakes,
+} from '../lib/storage';
 import QuestionCard from '../components/QuestionCard';
 import ProgressBar from '../components/ProgressBar';
 import Timer from '../components/Timer';
@@ -58,7 +64,26 @@ function QuizRunner({ config }: { config: QuizConfig }) {
       const result = buildResult(config, questions, latest, durationSec);
       saveResult(result);
       updateMistakes(result.answers);
-      navigate('/results', { state: { result }, replace: true });
+
+      // Treasury progression: passing a tier unlocks the next.
+      let unlockedTier: Difficulty | undefined;
+      const diffs = config.difficulties;
+      if (
+        config.level === 'treasury' &&
+        diffs &&
+        diffs.length === 1 &&
+        questions.length >= 5 &&
+        result.passed
+      ) {
+        const tier = diffs[0];
+        const alreadyPassed = getTreasuryPassed().includes(tier);
+        recordTreasuryPass(tier);
+        if (!alreadyPassed) {
+          unlockedTier = nextTreasuryTier(tier) ?? undefined;
+        }
+      }
+
+      navigate('/results', { state: { result, unlockedTier }, replace: true });
     },
     [config, navigate, questions, startedAt],
   );

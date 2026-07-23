@@ -1,6 +1,6 @@
 // localStorage-backed persistence for attempt history and the mistake pool.
 
-import type { AttemptResult, AnswerRecord } from '../types';
+import type { AttemptResult, AnswerRecord, Difficulty } from '../types';
 
 const RESULTS_KEY = 'csc_reviewer_results_v1';
 const MISTAKES_KEY = 'csc_reviewer_mistakes_v1';
@@ -96,4 +96,44 @@ export function setProfileName(name: string): void {
 
 export function clearProfile(): void {
   writeJSON(PROFILE_KEY, '');
+}
+
+// ---------------------------------------------------------------------------
+// Treasury progression: pass a difficulty tier (>= passing score) to unlock the
+// next one. Stored per browser/device, like the rest of the progress.
+
+const TREASURY_KEY = 'csc_reviewer_treasury_progress_v1';
+
+export function getTreasuryPassed(): Difficulty[] {
+  return readJSON<Difficulty[]>(TREASURY_KEY, []);
+}
+
+export function recordTreasuryPass(d: Difficulty): void {
+  const set = new Set(getTreasuryPassed());
+  set.add(d);
+  writeJSON(TREASURY_KEY, Array.from(set));
+}
+
+export function clearTreasuryProgress(): void {
+  writeJSON(TREASURY_KEY, []);
+}
+
+export function isTreasuryTierUnlocked(d: Difficulty): boolean {
+  if (d === 'easy') return true;
+  const passed = getTreasuryPassed();
+  if (d === 'medium') return passed.includes('easy');
+  return passed.includes('medium');
+}
+
+export function highestUnlockedTreasuryTier(): Difficulty {
+  const passed = getTreasuryPassed();
+  if (passed.includes('medium')) return 'hard';
+  if (passed.includes('easy')) return 'medium';
+  return 'easy';
+}
+
+export function nextTreasuryTier(d: Difficulty): Difficulty | null {
+  if (d === 'easy') return 'medium';
+  if (d === 'medium') return 'hard';
+  return null;
 }
